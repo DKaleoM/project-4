@@ -121,10 +121,16 @@
             // View flask_brevets.py for details.
             function calc_times(control) {
               var km = control.find("input[name='km']").val();
+			  var start_date_input = $("input[name='begin_date']").val();
+			  var start_date = moment(start_date_input).format("YYYY-MM-DDTHH:mm");
+			  console.log("start date input: " + start_date_input);
+			  console.log("start date: " + start_date);
+			  
               var open_time_field = control.find("input[name='open']");
               var close_time_field = control.find("input[name='close']");
+			  console.log("calculating times ");
 
-              $.getJSON(TIME_CALC_URL, {km: km, openTime: open_time_field, closeTime: close_time_field}).done(
+              $.getJSON(TIME_CALC_URL, {km: km, start_time: start_date}).done(
                 function(data) {
                    var times = data.result;
                    console.log("Got a response: ");
