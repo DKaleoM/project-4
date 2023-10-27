@@ -17,6 +17,9 @@ stop:
 terminal:
 	@(cd brevets; docker exec -it $$(cat ../dockerContainer.txt) /bin/bash)
 
+test:
+	@(cd brevets; docker exec -it $$(cat ../dockerContainer.txt) ./run_tests.sh)
+
 run:
 	@(make restart)
 
