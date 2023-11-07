@@ -1,0 +1,125 @@
+"""
+Nose tests for acp_times.py
+
+Write your tests HERE AND ONLY HERE.
+"""
+
+#imports for what we need to test
+import arrow
+from acp_times import open_time, close_time
+
+#helper functions to make test cases shorter to write
+def format_time(time):
+    return time.format('YYYY-MM-DDTHH:mm')
+
+def assert_equal(actual, expected, msg = "unknown"):
+    assert actual == expected, "Expected: " + str(expected) + " but got " + str(actual) + " at " + msg
+
+def assert_time_equal(actual, expected, msg = "unknown"):
+    assert_equal(format_time(actual),format_time(expected), msg)
+
+def assert_time_correct(checkpointDist, brevetDist, startTimeStr, correctTimeStr, timeFunc, msg = "unknown"):
+    start_time = arrow.get(startTimeStr,"YYYY-MM-DDTHH:mm")
+
+    correct_time = arrow.get(correctTimeStr,"YYYY-MM-DDTHH:mm")
+
+    returned_time = timeFunc(checkpointDist, brevetDist, start_time)
+
+    assert_time_equal(returned_time, correct_time, msg)
+
+import nose    # Testing framework
+import logging
+logging.basicConfig(format='%(levelname)s:%(message)s',
+                    level=logging.WARNING)
+log = logging.getLogger(__name__)
+
+#actual tests found below this comment
+
+#1 test each of just opening and closing times for a full brevet
+
+checkpointTimesBasic300 = [
+        (0, "2025-12-12T09:00", "2025-12-12T10:00"),
+        (100, "2025-12-12T11:56", "2025-12-12T15:40"),
+        (150, "2025-12-12T13:25", "2025-12-12T19:00"),
+        (225, "2025-12-12T15:40", "2025-12-13T00:00"),
+        (280, "2025-12-12T17:23", "2025-12-13T03:40"),
+        (330, "2025-12-12T18:00", "2025-12-13T05:00"),
+        ]
+brevetDistBasic300 = 300
+startDateBasic300 = "2025-12-12T09:00"
+
+def test_basic_300_times():
+    checkpointTimes = checkpointTimesBasic300
+    brevetDist = brevetDistBasic300
+    startDate = startDateBasic300
+    
+    for checkpoint in checkpointTimes:
+        dist = checkpoint[0]
+        openTime = checkpoint[1]
+        closeTime = checkpoint[2]
+
+        #check open time
+        yield assert_time_correct, dist, brevetDist, startDate, openTime, open_time, "open time of checkpoint: "+str(dist)+"km"
+
+        #check open time
+        yield assert_time_correct, dist, brevetDist, startDate, closeTime, close_time, "close time of checkpoint: "+str(dist)+"km"
+
+
+
+        
+
+"""
+def test_basic_300_open_times():
+    #all dates in "YYYY-MM-DDTHH:mm" format
+    #since the conversion isn't part of function being tested
+    startDate = "2025-12-12T09:00"
+
+    #all distances in km since conversion isn't part of the function
+    brevetDist = 300
+
+    #tuples are dist, opening time, closing time
+    #closing time is there since same format is used for all other tests
+    #created using the calculator website: https://rusa.org/octime_acp.html
+    checkpointTimes = [
+        (0, "2025-12-12T09:00", "2025-12-12T10:00"),
+        (100, "2025-12-12T11:56", "2025-12-12T15:40"),
+        (150, "2025-12-12T13:25", "2025-12-12T19:00"),
+        (225, "2025-12-12T15:40", "2025-12-13T00:00"),
+        (280, "2025-12-12T17:23", "2025-12-13T03:40"),
+        (330, "2025-12-12T18:00", "2025-12-13T05:00"),
+        ]
+
+    for checkpoint in checkpointTimes:
+        dist = checkpoint[0]
+        openTime = checkpoint[1]
+        closeTime = checkpoint[2]
+        
+        assert_time_correct(dist, brevetDist, startDate, openTime, open_time, "checkpoint: "+str(dist)+"km")
+
+def test_basic_300_close_times():
+
+    startDate = "2025-12-12T09:00"
+
+    brevetDist = 300
+
+    #tuples are dist, opening time, closing time
+    #opening time is there since same format is used for all other tests
+    #created using the calculator website: https://rusa.org/octime_acp.html
+    checkpointTimes = [
+        (0, "2025-12-12T09:00", "2025-12-12T10:00"),
+        (100, "2025-12-12T11:56", "2025-12-12T15:40"),
+        (150, "2025-12-12T13:25", "2025-12-12T19:00"),
+        (225, "2025-12-12T15:40", "2025-12-13T00:00"),
+        (280, "2025-12-12T17:23", "2025-12-13T03:40"),
+        (330, "2025-12-12T18:00", "2025-12-13T05:00"),
+        ]
+
+    for checkpoint in checkpointTimes:
+        dist = checkpoint[0]
+        openTime = checkpoint[1]
+        closeTime = checkpoint[2]
+        
+        assert_time_correct(dist, brevetDist, startDate, closeTime, close_time, "checkpoint: "+str(dist))
+
+
+"""
